@@ -1,547 +1,274 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
 <title>12-Color Watercolor Wheel</title>
-
 <style>
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-
-
   body {
-
     background: #F4F0E8;
-
     font-family: -apple-system, system-ui, sans-serif;
-
     color: #2B2620;
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     padding: 32px 16px 60px;
-
     min-height: 100vh;
-
   }
-
-
 
   h1 {
-
     font-family: Georgia, 'Times New Roman', serif;
-
     font-weight: 600;
-
     font-size: 28px;
-
     text-align: center;
-
     margin-bottom: 4px;
-
   }
-
-
 
   .subtitle {
-
     font-size: 14px;
-
     color: #6B6354;
-
     margin-bottom: 28px;
-
     text-align: center;
-
   }
-
-
 
   .wheel-wrap {
-
     position: relative;
-
     width: 420px;
-
     height: 420px;
-
     margin-bottom: 12px;
-
   }
-
-
 
   .wedge {
-
     position: absolute;
-
     width: 50%;
-
     height: 50%;
-
     top: 50%;
-
     left: 50%;
-
     transform-origin: 0% 0%;
-
     cursor: pointer;
-
     clip-path: polygon(0 0, 100% 0, 100% 100%);
-
     transition: filter 0.15s ease, transform 0.15s ease;
-
   }
-
-
 
   .wedge:hover, .wedge.active {
-
     filter: brightness(1.08) saturate(1.1);
-
     z-index: 5;
-
   }
-
-
 
   .wedge-label {
-
     position: absolute;
-
     font-size: 10px;
-
     font-weight: 600;
-
     color: rgba(0,0,0,0.55);
-
     white-space: nowrap;
-
     pointer-events: none;
-
     text-shadow: 0 1px 2px rgba(255,255,255,0.3);
-
   }
-
-
 
   .center-hole {
-
     position: absolute;
-
     width: 90px;
-
     height: 90px;
-
     top: 50%;
-
     left: 50%;
-
     transform: translate(-50%, -50%);
-
     background: #F4F0E8;
-
     border-radius: 50%;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     font-family: Georgia, 'Times New Roman', serif;
-
     font-size: 12px;
-
     color: #6B6354;
-
     text-align: center;
-
     line-height: 1.3;
-
     padding: 8px;
-
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
-
   }
-
-
 
   .info-card {
-
     width: 360px;
-
     min-height: 150px;
-
     background: #FFFFFF;
-
     border-radius: 14px;
-
     padding: 22px 24px;
-
     box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-
     border: 1px solid rgba(0,0,0,0.05);
-
   }
-
-
 
   .info-card .name {
-
     font-family: Georgia, 'Times New Roman', serif;
-
     font-weight: 600;
-
     font-size: 20px;
-
     margin-bottom: 2px;
-
     display: flex;
-
     align-items: center;
-
     gap: 10px;
-
   }
-
-
 
   .swatch-dot {
-
     width: 18px;
-
     height: 18px;
-
     border-radius: 50%;
-
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
-
   }
-
-
 
   .info-card .type-tag {
-
     display: inline-block;
-
     font-size: 11px;
-
     font-weight: 600;
-
     letter-spacing: 0.04em;
-
     text-transform: uppercase;
-
     color: #8A6F4E;
-
     background: #F4ECDD;
-
     padding: 3px 9px;
-
     border-radius: 100px;
-
     margin-bottom: 14px;
-
   }
-
-
 
   .info-card .ratio-row {
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     font-size: 15px;
-
     margin-bottom: 10px;
-
     flex-wrap: wrap;
-
   }
-
-
 
   .ratio-chip {
-
     display: inline-flex;
-
     align-items: center;
-
     gap: 6px;
-
     background: #F4F0E8;
-
     padding: 5px 11px;
-
     border-radius: 8px;
-
     font-weight: 500;
-
     font-size: 14px;
-
   }
-
-
 
   .ratio-chip .dot {
-
     width: 10px;
-
     height: 10px;
-
     border-radius: 50%;
-
   }
-
-
 
   .plus {
-
     color: #B0A690;
-
     font-weight: 600;
-
   }
-
-
 
   .note {
-
     font-size: 12.5px;
-
     color: #6B6354;
-
     line-height: 1.5;
-
     margin-top: 8px;
-
   }
-
-
 
   .hint {
-
     font-size: 12px;
-
     color: #9A9080;
-
     margin-top: 18px;
-
     text-align: center;
-
   }
-
 </style>
-
 </head>
-
 <body>
 
-
-
 <h1>12-Color Wheel</h1>
-
 <div class="subtitle">Tap a wedge to see how to mix it</div>
-
-
 
 <div class="wheel-wrap" id="wheel"></div>
 
-
-
 <div class="info-card" id="infoCard">
-
   <div class="name" id="cName">
-
     <span class="swatch-dot" id="cDot" style="background:#D7263D"></span>
-
     <span id="cNameText">Red</span>
-
   </div>
-
   <div class="type-tag" id="cType">Primary</div>
-
   <div class="ratio-row" id="cRatio"></div>
-
   <div class="note" id="cNote">Straight from the tube — no mixing needed.</div>
-
 </div>
-
-
 
 <div class="hint">Mix proportions are starting points — adjust by eye, as pigment strength varies by brand.</div>
 
-
-
 <script>
-
 const colors = [
-
-  { name: "Red", hex: "#D7263D", type: "Primary", mix: [{label:"Red", hex:"#D7263D"}], note: "Straight from the tube — no mixing needed. A cool red (alizarin-type) gives cleaner violets; a warm red (cadmium-type) gives cleaner oranges." },
-
-  { name: "Red-Orange", hex: "#E5552E", type: "Tertiary", mix: [{label:"Red", hex:"#D7263D", part:"2 parts"}, {label:"Orange", hex:"#F2A007", part:"1 part"}], note: "Start with your mixed orange, then add red gradually until it warms up." },
-
-  { name: "Orange", hex: "#F2A007", type: "Secondary", mix: [{label:"Yellow", hex:"#F7D917", part:"1 part"}, {label:"Red", hex:"#D7263D", part:"1 part"}], note: "Add yellow to the palette first, then mix in red bit by bit — red is far stronger and will overpower if added all at once." },
-
-  { name: "Yellow-Orange", hex: "#F2B807", type: "Tertiary", mix: [{label:"Orange", hex:"#F2A007", part:"1 part"}, {label:"Yellow", hex:"#F7D917", part:"2 parts"}], note: "Start with your mixed orange, then add yellow gradually until it brightens up." },
-
-  { name: "Yellow", hex: "#F7D917", type: "Primary", mix: [{label:"Yellow", hex:"#F7D917"}], note: "Straight from the tube. The weakest of the three primaries — easy to overpower in any mix." },
-
-  { name: "Yellow-Green", hex: "#A8C93A", type: "Tertiary", mix: [{label:"Green", hex:"#3FA050", part:"1 part"}, {label:"Yellow", hex:"#F7D917", part:"2 parts"}], note: "Start with your mixed green, then add yellow gradually until it brightens." },
-
-  { name: "Green", hex: "#3FA050", type: "Secondary", mix: [{label:"Yellow", hex:"#F7D917", part:"1 part"}, {label:"Blue", hex:"#1C5FA8", part:"1 part"}], note: "Add yellow first, then mix in blue gradually — easy to tip into a muddy teal if you go too far." },
-
-  { name: "Blue-Green", hex: "#1C8C7A", type: "Tertiary", mix: [{label:"Green", hex:"#3FA050", part:"1 part"}, {label:"Blue", hex:"#1C5FA8", part:"2 parts"}], note: "Start with your mixed green, then add blue gradually until it cools and deepens." },
-
-  { name: "Blue", hex: "#1C5FA8", type: "Primary", mix: [{label:"Blue", hex:"#1C5FA8"}], note: "Straight from the tube. A warm blue (ultramarine-type) makes nicer violets; a cool blue (phthalo-type) makes nicer greens." },
-
-  { name: "Blue-Violet", hex: "#3D4A9E", type: "Tertiary", mix: [{label:"Violet", hex:"#6A3FA0", part:"1 part"}, {label:"Blue", hex:"#1C5FA8", part:"2 parts"}], note: "Start with your mixed violet, then add blue gradually until it cools." },
-
-  { name: "Violet", hex: "#6A3FA0", type: "Secondary", mix: [{label:"Blue", hex:"#1C5FA8", part:"1 part"}, {label:"Red", hex:"#D7263D", part:"1 part"}], note: "Easiest secondary to mud up — use minimal water and add color gradually. Tends toward gray if overmixed." },
-
-  { name: "Red-Violet", hex: "#8C2E63", type: "Tertiary", mix: [{label:"Violet", hex:"#6A3FA0", part:"1 part"}, {label:"Red", hex:"#D7263D", part:"2 parts"}], note: "Start with your mixed violet, then add red gradually until it warms." },
-
+  { name: "Red", hex: "#D7263D", type: "Primary", mix: [{label:"PR170/PO36", hex:"#D7263D"}], note: "Your warm red — straight from the tube. PR170 with PO36 already pushes this toward orange-red, making it ideal for oranges but too warm for clean violets. Use PV19 instead when mixing toward violet." },
+  { name: "Red-Orange", hex: "#E5552E", type: "Tertiary", mix: [{label:"PR170/PO36", hex:"#D7263D", part:"2 parts"}, {label:"PY35", hex:"#F2A007", part:"1 part"}], note: "Start with your mixed orange on the palette, then add PR170/PO36 gradually. Because your red already leans orange, this mix moves quickly — add the red in tiny increments or it will overshoot. Aim for a rich brick-red rather than a true red-orange." },
+  { name: "Orange", hex: "#F2A007", type: "Secondary", mix: [{label:"PY35", hex:"#F7D917", part:"1 part"}, {label:"PR170/PO36", hex:"#D7263D", part:"1 part"}], note: "Start with PY35 on the palette — it's the weaker pigment. Add PR170/PO36 in very small amounts; the PO36 component already pushes it toward orange, so this mix comes together fast and cleanly. Expect a vibrant, warm orange — one of the strongest mixes in your palette." },
+  { name: "Yellow-Orange", hex: "#F2B807", type: "Tertiary", mix: [{label:"PY35", hex:"#F7D917", part:"2 parts"}, {label:"PR170/PO36", hex:"#D7263D", part:"1 part"}], note: "Start with PY35 and add the tiniest touch of PR170/PO36 — this is mostly yellow with just a hint of warmth. PY35 is opaque and strong, so the mix will look quite yellow until the red starts to shift it. Stop as soon as you see the first golden warmth appear." },
+  { name: "Yellow", hex: "#F7D917", type: "Primary", mix: [{label:"PY35", hex:"#F7D917"}], note: "Straight from the tube. PY35 (Cadmium Yellow) is warm, opaque, and powerful — but still the weakest of your three primaries by tinting strength. Handle dry pigment carefully as cadmiums are toxic; avoid inhaling dust when mixing. Dilutes to a rich, warm golden yellow." },
+  { name: "Yellow-Green", hex: "#A8C93A", type: "Tertiary", mix: [{label:"PY35", hex:"#F7D917", part:"2 parts"}, {label:"PB29", hex:"#1C5FA8", part:"1 part"}], note: "Start with PY35 and add PB29 in very small amounts — PB29 is significantly stronger and will tip this toward green quickly. The warm bias of both PY35 and PB29 (ultramarine leans warm) means this mix can go slightly olive; stop early for a brighter yellow-green." },
+  { name: "Green", hex: "#3FA050", type: "Secondary", mix: [{label:"PY35", hex:"#F7D917", part:"1 part"}, {label:"PB29", hex:"#1C5FA8", part:"1 part"}], note: "Start with PY35, then add PB29 carefully — PB29 is much stronger. Because ultramarine leans warm (toward violet) rather than cool (toward cyan), your greens will be slightly muted and earthy rather than vibrant. This is actually beautiful for naturalistic foliage. For a brighter green you would need a cool blue like phthalo, but your PB29 green has its own character." },
+  { name: "Blue-Green", hex: "#1C8C7A", type: "Tertiary", mix: [{label:"PB29", hex:"#1C5FA8", part:"2 parts"}, {label:"PY35", hex:"#F7D917", part:"1 part"}], note: "Start with your mixed green, then add PB29 gradually. PB29's granulating properties will start to show at this ratio — expect some subtle texture as the ultramarine settles. This is a deep, slightly muted teal rather than a bright turquoise, which suits landscapes and water particularly well." },
+  { name: "Blue", hex: "#1C5FA8", type: "Primary", mix: [{label:"PB29", hex:"#1C5FA8"}], note: "Straight from the tube. PB29 (Ultramarine Blue) is a warm blue — it leans slightly toward violet rather than green. It granulates beautifully when diluted, leaving a soft, textured bloom on paper. Your strongest and most dominant pigment; use a light touch when adding it to any mix. Pairs best with PV19 for violets." },
+  { name: "Blue-Violet", hex: "#3D4A9E", type: "Tertiary", mix: [{label:"PB29", hex:"#1C5FA8", part:"2 parts"}, {label:"PV19", hex:"#C2385A", part:"1 part"}], note: "Start with your mixed violet, then add PB29 gradually. Both PB29 and PV19 are transparent pigments that mix cleanly together — this is one of the most luminous mixes in your palette. The granulation of PB29 will be visible, giving this a beautiful textured quality when washed out on paper." },
+  { name: "Violet", hex: "#6A3FA0", type: "Secondary", mix: [{label:"PB29", hex:"#1C5FA8", part:"1 part"}, {label:"PV19", hex:"#C2385A", part:"1 part"}], note: "Use PV19 (not PR170/PO36) here — your warm red would muddy this immediately. Start with PV19 and add PB29 slowly. Both pigments are transparent, so this can be a stunning, jewel-like violet. Keep the mix fairly dry and avoid overworking it. PB29 granulates, so expect beautiful texture on wet paper. Do not substitute PR170/PO36 here." },
+  { name: "Red-Violet", hex: "#8C2E63", type: "Tertiary", mix: [{label:"PV19", hex:"#C2385A", part:"2 parts"}, {label:"PB29", hex:"#1C5FA8", part:"1 part"}], note: "Start with PV19 and add a small touch of PB29 to deepen and cool it slightly. PV19 on its own is already close to red-violet depending on your specific version — you may need very little PB29. Again, do not use PR170/PO36 here; the PO36 component would immediately push this toward brown." },
 ];
 
-
-
 const wheel = document.getElementById('wheel');
-
 const n = colors.length;
-
 const angleStep = 360 / n;
 
-
-
 const R = 100;
-
 const halfRad = (angleStep / 2) * Math.PI / 180;
-
 const a1 = (45 * Math.PI / 180) - halfRad;
-
 const a2 = (45 * Math.PI / 180) + halfRad;
-
 const x1 = R * Math.cos(a1), y1 = R * Math.sin(a1);
-
 const x2 = R * Math.cos(a2), y2 = R * Math.sin(a2);
-
 const clipPath = `polygon(0 0, ${x1}% ${y1}%, ${x2}% ${y2}%)`;
 
-
-
 colors.forEach((c, i) => {
-
   const wedge = document.createElement('div');
-
   wedge.className = 'wedge';
-
   wedge.style.background = c.hex;
-
   wedge.style.clipPath = clipPath;
-
   const rotation = i * angleStep - 90 - 45;
-
   wedge.style.transform = `rotate(${rotation}deg)`;
-
   wedge.dataset.index = i;
-
   wedge.addEventListener('click', () => selectColor(i));
-
   wheel.appendChild(wedge);
-
 });
 
-
-
 const centerHole = document.createElement('div');
-
 centerHole.className = 'center-hole';
-
-centerHole.textContent = 'R + Y + B';
-
+centerHole.textContent = 'PB29 PY35 PR170 PV19';
 wheel.appendChild(centerHole);
 
-
-
 function selectColor(i) {
-
   document.querySelectorAll('.wedge').forEach(w => w.classList.remove('active'));
-
   document.querySelector(`.wedge[data-index="${i}"]`).classList.add('active');
 
-
-
   const c = colors[i];
-
   document.getElementById('cDot').style.background = c.hex;
-
   document.getElementById('cNameText').textContent = c.name;
-
   document.getElementById('cType').textContent = c.type;
-
   document.getElementById('cNote').textContent = c.note;
 
-
-
   const ratioRow = document.getElementById('cRatio');
-
   ratioRow.innerHTML = '';
-
   c.mix.forEach((m, idx) => {
-
     if (idx > 0) {
-
       const plus = document.createElement('span');
-
       plus.className = 'plus';
-
       plus.textContent = '+';
-
       ratioRow.appendChild(plus);
-
     }
-
     const chip = document.createElement('span');
-
     chip.className = 'ratio-chip';
-
     const dot = document.createElement('span');
-
     dot.className = 'dot';
-
     dot.style.background = m.hex;
-
     chip.appendChild(dot);
-
     chip.append(`${m.label}${m.part ? ' (' + m.part + ')' : ''}`);
-
     ratioRow.appendChild(chip);
-
   });
-
 }
 
-
-
 selectColor(0);
-
 </script>
 
-
-
 </body>
-
 </html>
